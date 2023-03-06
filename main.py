@@ -1,2 +1,4 @@
 if __name__ == '__main__':
-    print("FIRST")
+    print("NEW")
+    print("NEW")
+    print("NEW")

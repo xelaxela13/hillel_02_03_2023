@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="post">
+        <input type="email" name="email">
+        <input type="password" name="password">
+        <input type="submit">
+    </form>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% if success %}
+        <p>You are inside.</p>
+    {% endif %}
+    {% if error %}
+        <p>Wrong email or password.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,3 +1,4 @@
 Django==4.1.7
 ipdb==0.13.13
 flake8==6.0.0
+django-environ==0.10.0

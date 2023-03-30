@@ -3,10 +3,13 @@ import decimal
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Sum, F
+from django.utils import timezone
 
 from project.constants import MAX_DIGITS, DECIMAL_PLACES
 from project.mixins.models import PKMixin
 from project.model_choices import DiscountTypes
+
+User = get_user_model()
 
 
 class Discount(PKMixin):
@@ -16,7 +19,8 @@ class Discount(PKMixin):
         default=0
     )
     code = models.CharField(
-        max_length=32
+        max_length=32,
+        unique=True
     )
     is_active = models.BooleanField(
         default=True
@@ -25,10 +29,21 @@ class Discount(PKMixin):
         choices=DiscountTypes.choices,
         default=DiscountTypes.VALUE
     )
+    valid_until = models.DateTimeField(
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return f"{self.amount} | {self.code} | " \
                f"{DiscountTypes(self.discount_type).label}"
+
+    @property
+    def is_valid(self):
+        is_valid = self.is_active
+        if self.valid_until:
+            is_valid &= timezone.now() <= self.valid_until
+        return is_valid
 
 
 class Order(PKMixin):
@@ -38,12 +53,11 @@ class Order(PKMixin):
         default=0
     )
     user = models.ForeignKey(
-        get_user_model(),
+        User,
         on_delete=models.SET_NULL,
         null=True,
         blank=True
     )
-
     discount = models.ForeignKey(
         Discount,
         on_delete=models.SET_NULL,
@@ -52,6 +66,7 @@ class Order(PKMixin):
     )
     is_active = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
+    order_number = models.PositiveSmallIntegerField(default=1)
 
     class Meta:
         constraints = [
@@ -71,7 +86,12 @@ class Order(PKMixin):
         total_amount = self.order_items.aggregate(
             total_amount=Sum(F('price') * F('quantity'))
         )['total_amount'] or 0
-        if self.discount and self.discount.is_active:
+
+        # total_amount = 0
+        # for item in self.order_items.iterator():
+        #     total_amount += item.price * item.quantity
+
+        if self.discount and self.discount.is_valid:
             total_amount = (
                 total_amount - self.discount.amount
                 if self.discount.discount_type == DiscountTypes.VALUE else

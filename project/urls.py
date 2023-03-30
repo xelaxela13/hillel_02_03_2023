@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 
 from products.urls import urlpatterns as products_urlpatterns
+from feedbacks.urls import urlpatterns as feedbacks_urlpatterns
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('products/', include(products_urlpatterns))
+    path('products/', include(products_urlpatterns)),
+    path('feedbacks/', include(feedbacks_urlpatterns))
 ]
 
 if settings.DEBUG:

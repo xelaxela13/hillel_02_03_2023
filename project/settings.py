@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "products",
     "orders",
-    "feedbacks"
+    "feedbacks",
+    "accounts"
 ]
 
 MIDDLEWARE = [
@@ -106,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+LOGOUT_REDIRECT_URL = '/feedbacks/'
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 

@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # external packages
+    'widget_tweaks',
+    # internal packages
     "products",
     "orders",
     "feedbacks",

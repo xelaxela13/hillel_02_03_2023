@@ -86,11 +86,7 @@ class Order(PKMixin):
         total_amount = self.order_items.aggregate(
             total_amount=Sum(F('price') * F('quantity'))
         )['total_amount'] or 0
-
-        # total_amount = 0
-        # for item in self.order_items.iterator():
-        #     total_amount += item.price * item.quantity
-
+        total_amount = decimal.Decimal(total_amount)
         if self.discount and self.discount.is_valid:
             total_amount = (
                 total_amount - self.discount.amount

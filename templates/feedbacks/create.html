@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="col-12 col-lg-6 offset-lg-3">
-        <h2>New feedbacks</h2>
+    <div class="col-12 col-lg-4 offset-lg-4 my-3 my-lg-5">
+        <h2>New feedback</h2>
         <form method="post">
-            {% csrf_token %}
             {% include 'parts/form.html' with form=form %}
-            <input type="submit" class="btn btn-primary" value="Submit">
+            <input type="submit" class="btn btn-primary w-100" value="Save">
         </form>
     </div>
 {% endblock content %}

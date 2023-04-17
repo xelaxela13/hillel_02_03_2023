@@ -25,7 +25,7 @@
                         {% endfor %}
                     </p>
                     <p class="card-text">
-                        {{ product.description }}
+                        {{ product.description|truncatewords:16 }}
                     </p>
                     <p class="card-text">
                         {{ product.price }}

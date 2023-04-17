@@ -9,7 +9,7 @@
                        data-bs-toggle="collapse"
                        href="#collapse{{ feedback.id }}">
                         <span>{{ feedback.user.first_name }} {% include 'parts/stars.html' with count=feedback.rating %}</span>
-                        <span>{{ feedback.created_at }}</span>
+                        <span>{{ feedback.created_at|date:"d M Y" }}</span>
                     </a>
                     <div class="collapse pt-3" id="collapse{{ feedback.id }}">
                         {{ feedback.text }}

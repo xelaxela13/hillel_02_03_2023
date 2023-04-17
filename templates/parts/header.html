@@ -1,7 +1,10 @@
+{% load static %}
 <header>
     <nav class="navbar navbar-expand-lg bg-warning">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'main' %}">LOGO</a>
+            <a class="navbar-brand" href="{% url 'main' %}">
+                <img class="logo" src="{% static 'images/logo.png' %}" alt="logo">
+            </a>
             <button class="navbar-toggler" type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent"

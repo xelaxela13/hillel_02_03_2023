@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+    <div class="col-12">
+        <p>
+            <a href="{% url 'products_to_csv' %}">Export to csv</a>
+        </p>
+        <p>
+            <a href="{% url 'products_to_pdf' %}">Export to pdf</a>
+        </p>
+    </div>
     {% for product in products %}
         <div class="col-12 {% if product.products.exists %}col-lg-6{% else %}col-lg-3{% endif %} mt-3 mt-lg-5">
             <div class="card">

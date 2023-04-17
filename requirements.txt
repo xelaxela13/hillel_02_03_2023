@@ -5,3 +5,4 @@ django-environ==0.10.0
 pillow==9.4.0
 faker==18.3.1
 django-widget-tweaks==1.4.12
+weasyprint==58.1

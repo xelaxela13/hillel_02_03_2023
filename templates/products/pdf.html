@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Producs</title>
+</head>
+<body>
+<div>
+    <img style="width: 100px;" src="https://www.lego.com/cdn/cs/set/assets/blt8e8c3dde1a16d19c/40622-T2-202302-PS-Block-Standard.jpg?fit=crop&format=jpg&quality=80&width=635&height=440&dpr=1">
+</div>
+<h1>Products {% now "jS F Y H:i" %}</h1>
+{% for product in products %}
+    <p>{{ product.name }} - {{ product.price }}</p>
+{% endfor %}
+</body>
+</html>

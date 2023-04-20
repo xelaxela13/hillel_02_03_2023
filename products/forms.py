@@ -70,9 +70,7 @@ class ImportCSVForm(forms.Form):
                         description=product['description'],
                         price=decimal.Decimal(product['price']),
                         sku=product['sku'],
-                        category=Category.objects.get_or_create(
-                            name=product['category']
-                        )[0]
+                        is_active=product['is_active']
                     )
                 )
             except (KeyError, decimal.InvalidOperation) as err:

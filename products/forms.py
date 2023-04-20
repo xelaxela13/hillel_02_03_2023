@@ -1,4 +1,10 @@
+import csv
+import decimal
+from io import StringIO
+
 from django import forms
+from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 
 from products.models import Product
 from project.constants import MAX_DIGITS, DECIMAL_PLACES
@@ -40,17 +46,6 @@ class ProductModelForm(forms.ModelForm):
         except Product.DoesNotExist:
             ...
         return self.cleaned_data['name']
-
-
-import csv
-import decimal
-from io import StringIO
-
-from django import forms
-from django.core.exceptions import ValidationError
-from django.core.validators import FileExtensionValidator
-
-from products.models import Product, Category
 
 
 class ImportCSVForm(forms.Form):

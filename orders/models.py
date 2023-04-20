@@ -76,7 +76,7 @@ class Order(PKMixin):
         ]
 
     def __str__(self):
-        return f"{self.user} | {self.get_total_amount()}"
+        return f"{self.user} | {self.total_amount}"
 
     @property
     def is_current_order(self):

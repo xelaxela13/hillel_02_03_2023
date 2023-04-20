@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-3">
+        <div class="row">
+            <div class="col-12 col-lg-4 offset-lg-4">
+                <h2>Import CSV</h2>
+                <form method="post" enctype="multipart/form-data">
+                    {% include 'parts/form.html' %}
+                    <input class="btn btn-primary mt-3" type="submit"
+                           value="Submit">
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

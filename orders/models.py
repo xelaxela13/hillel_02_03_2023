@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Sum, F
 from django.utils import timezone
+from django_lifecycle import LifecycleModelMixin, AFTER_SAVE, hook
 
 from project.constants import MAX_DIGITS, DECIMAL_PLACES
 from project.mixins.models import PKMixin
@@ -46,7 +47,7 @@ class Discount(PKMixin):
         return is_valid
 
 
-class Order(PKMixin):
+class Order(LifecycleModelMixin, PKMixin):
     total_amount = models.DecimalField(
         max_digits=MAX_DIGITS,
         decimal_places=DECIMAL_PLACES,
@@ -94,6 +95,12 @@ class Order(PKMixin):
                 total_amount - (total_amount / 100 * self.discount.amount)
             ).quantize(decimal.Decimal('.01'))
         return total_amount
+
+    @hook(AFTER_SAVE)
+    def set_total_amount(self):
+        self.total_amount = self.get_total_amount()
+        self.save(skip_hooks=True)
+        # Order.objects.filter(id=self.id).update(total_amount=total_amount)
 
 
 class OrderItem(PKMixin):

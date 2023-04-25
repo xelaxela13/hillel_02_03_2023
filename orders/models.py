@@ -4,7 +4,8 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Sum, F
 from django.utils import timezone
-from django_lifecycle import LifecycleModelMixin, AFTER_SAVE, hook
+from django_lifecycle import LifecycleModelMixin, AFTER_SAVE, hook, \
+    AFTER_UPDATE
 
 from project.constants import MAX_DIGITS, DECIMAL_PLACES
 from project.mixins.models import PKMixin
@@ -96,14 +97,13 @@ class Order(LifecycleModelMixin, PKMixin):
             ).quantize(decimal.Decimal('.01'))
         return total_amount
 
-    @hook(AFTER_SAVE)
+    @hook(AFTER_UPDATE, when='discount', has_changed=True)
     def set_total_amount(self):
         self.total_amount = self.get_total_amount()
-        self.save(skip_hooks=True)
-        # Order.objects.filter(id=self.id).update(total_amount=total_amount)
+        self.save(update_fields=('total_amount',), skip_hooks=True)
 
 
-class OrderItem(PKMixin):
+class OrderItem(LifecycleModelMixin, PKMixin):
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
@@ -122,3 +122,12 @@ class OrderItem(PKMixin):
 
     class Meta:
         unique_together = ('order', 'product')
+
+    @property
+    def sub_total(self):
+        return self.price * self.quantity
+
+    @hook(AFTER_SAVE)
+    def set_order_total_amount(self):
+        self.order.total_amount = self.order.get_total_amount()
+        self.order.save(update_fields=('total_amount',), skip_hooks=True)

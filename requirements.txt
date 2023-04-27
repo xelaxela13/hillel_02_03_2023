@@ -9,3 +9,5 @@ weasyprint==58.1
 django-lifecycle==1.0.0
 celery[redis]==5.2.7
 django-celery-results==2.5.0
+django-extensions==3.2.1
+django-celery-beat==2.5.0

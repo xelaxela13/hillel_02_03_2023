@@ -9,9 +9,10 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-import environ
 from pathlib import Path
 
+import environ
+from celery.schedules import crontab
 from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,15 +45,18 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # external packages
+    'django_celery_beat',
     'django_celery_results',
     'widget_tweaks',
+    'django_extensions',
     # internal packages
     "products",
     "orders",
     "feedbacks",
     "accounts",
     "main",
-    "tracking"
+    "tracking",
+    "currencies"
 ]
 
 MIDDLEWARE = [
@@ -144,3 +148,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_TASK_ALWAYS_EAGER = False
+
+CELERY_BEAT_SCHEDULE = {
+    'Get currencies': {
+        'task': 'currencies.tasks.get_currencies_task',
+        'schedule': crontab(hour='12', minute='0'),
+    },
+}

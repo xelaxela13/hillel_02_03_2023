@@ -14,6 +14,7 @@ from pathlib import Path
 import environ
 from celery.schedules import crontab
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -67,7 +68,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "project.middlewares.TrackingMiddleware"
+    "project.middlewares.TrackingMiddleware",
+    "django.middleware.locale.LocaleMiddleware"
 ]
 
 ROOT_URLCONF = "project.urls"
@@ -123,7 +125,16 @@ LOGOUT_REDIRECT_URL = LOGIN_REDIRECT_URL
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
+
+LANGUAGES = [
+    ('uk', _('Ukrainian')),
+    ('en', _('English')),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / "locale"
+]
 
 TIME_ZONE = "Europe/Kiev"
 
@@ -154,4 +165,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'currencies.tasks.get_currencies_task',
         'schedule': crontab(hour='12', minute='0'),
     },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+    }
 }

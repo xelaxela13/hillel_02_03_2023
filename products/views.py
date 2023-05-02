@@ -2,15 +2,17 @@ import csv
 
 import weasyprint
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import HttpResponse
+from django.core.cache import cache
+from django.http import HttpResponse, Http404
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView, FormView, ListView, DetailView
 
 from products.forms import ProductModelForm, ImportCSVForm
 from products.models import Product
+from project.model_choices import ProductCacheKeys
 
 
 def products(request, *args, **kwargs):
@@ -19,10 +21,69 @@ def products(request, *args, **kwargs):
         form = ProductModelForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             form.save()
-    return render(request, 'products/index.html', context={
+
+    return render(request, 'products/product_list.html', context={
         'products': Product.objects.iterator(),
         'form': form
     })
+
+
+class ProductDetail(DetailView):
+    context_object_name = 'product'
+    model = Product
+
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+
+        # Next, try looking up by primary key.
+        pk = self.kwargs.get(self.pk_url_kwarg)
+        slug = self.kwargs.get(self.slug_url_kwarg)
+        if pk is not None:
+            queryset = queryset.filter(pk=pk)
+
+        # Next, try looking up by slug.
+        if slug is not None and (pk is None or self.query_pk_and_slug):
+            slug_field = self.get_slug_field()
+            queryset = queryset.filter(**{slug_field: slug})
+
+        # If none of those are defined, it's an error.
+        if pk is None and slug is None:
+            raise AttributeError(
+                "Generic detail view %s must be called with either an object "
+                "pk or a slug in the URLconf." % self.__class__.__name__
+            )
+
+        try:
+            # Get the single item from the filtered queryset
+            obj = cache.get_or_set(f"{ProductCacheKeys.PRODUCTS}_{pk}",
+                                   queryset.get())
+        except queryset.model.DoesNotExist:
+            raise Http404(
+                "No %(verbose_name)s found matching the query"
+                % {"verbose_name": queryset.model._meta.verbose_name}
+            )
+        return obj
+
+
+class ProductsView(ListView):
+    context_object_name = 'products'
+    model = Product
+
+    def get_queryset(self):
+        queryset = cache.get(ProductCacheKeys.PRODUCTS)
+        if not queryset:
+            print('TO CACHE')
+            queryset = Product.objects.all()
+            cache.set(ProductCacheKeys.PRODUCTS, queryset)
+
+        ordering = self.get_ordering()
+        if ordering:
+            if isinstance(ordering, str):
+                ordering = (ordering,)
+            queryset = queryset.order_by(*ordering)
+
+        return queryset
 
 
 def export_csv(request, *args, **kwargs):

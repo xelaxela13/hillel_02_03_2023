@@ -57,7 +57,8 @@ INSTALLED_APPS = [
     "accounts",
     "main",
     "tracking",
-    "currencies"
+    "currencies",
+    'rosetta'
 ]
 
 MIDDLEWARE = [
@@ -107,16 +108,20 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        # noqa
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", # noqa
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        # noqa
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator", # noqa
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        # noqa
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", # noqa
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        # noqa
     },
 ]
 LOGIN_REDIRECT_URL = reverse_lazy('main')
@@ -158,7 +163,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = 'django-db'
-CELERY_TASK_ALWAYS_EAGER = False
+
 
 CELERY_BEAT_SCHEDULE = {
     'Get currencies': {
@@ -173,3 +178,8 @@ CACHES = {
         "LOCATION": "redis://127.0.0.1:6379",
     }
 }
+
+try:
+    from settings_local import *  # noqa
+except ImportError:
+    ...

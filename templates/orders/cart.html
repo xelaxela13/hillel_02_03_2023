@@ -14,6 +14,7 @@
                         <th scope="col">Quantity</th>
                         <th scope="col">Price</th>
                         <th scope="col">Subtotal</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -32,7 +33,9 @@
                                 <input class="form-control" type="number"
                                        id="quantity_id_{{ forloop.counter }}"
                                        value="{{ item.quantity }}"
-                                       name="quantity_{{ forloop.counter }}">
+                                       name="quantity_{{ forloop.counter }}"
+                                       min="1"
+                                >
                             </td>
                             <td class="col-2">
                                 {{ item.price }}
@@ -40,12 +43,24 @@
                             <td class="col-2">
                                 {{ item.sub_total }}
                             </td>
+                            <td>
+                                <input type="hidden" name="order_item_id"
+                                       value="{{ item.id }}">
+                                <input type="submit" value="Remove"
+                                       formaction="{% url 'cart_action' 'remove' %}"
+                                       class="btn btn-danger w-100">
+                            </td>
                         </tr>
                     {% endfor %}
                     <tr>
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td>
+                            <input type="submit" value="Clear cart"
+                                       formaction="{% url 'cart_action' 'clear' %}"
+                                       class="btn btn-danger w-100">
+                        </td>
                         <td>Total: <span
                                 class="small">(including discount)</span></td>
                         <td>{{ order.total_amount }}</td>

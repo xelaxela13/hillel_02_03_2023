@@ -12,6 +12,7 @@ class OrderItemInline(TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
+    list_display = ('total_amount', 'is_active', 'is_paid')
 
 
 @admin.register(OrderItem)

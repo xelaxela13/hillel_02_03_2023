@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.contrib.auth import login
+from django.contrib.auth.views import LoginView as AuthLoginView
 from django.views.generic import FormView
 
-from accounts.model_forms import RegistrationForm
+from accounts.model_forms import RegistrationForm, AuthenticationForm
 
 
 class RegistrationView(FormView):
@@ -14,3 +15,7 @@ class RegistrationView(FormView):
         user = form.save()
         login(self.request, user)
         return super().form_valid(form)
+
+
+class LoginView(AuthLoginView):
+    form_class = AuthenticationForm

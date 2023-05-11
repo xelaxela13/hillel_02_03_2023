@@ -1,7 +1,7 @@
 from django.core.mail import mail_admins
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, FormView
 from django.utils.translation import gettext_lazy as _
+from django.views.generic import TemplateView, FormView
 
 from main.forms import ContactForm
 
@@ -18,5 +18,6 @@ class ContactView(FormView):
     def form_valid(self, form):
         msg = f'FROM: ' \
               f'{form.cleaned_data["email"]}\n{form.cleaned_data["text"]}'
+        # todo move to celery task
         mail_admins(_('Contact form'), msg)
         return super().form_valid(form)

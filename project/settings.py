@@ -35,7 +35,7 @@ SECRET_KEY = env.str('SECRET_KEY', default='SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=True)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
-
+ENABLE_SILK = env.bool('ENABLE_SILK', default=False)
 # Application definition
 
 INSTALLED_APPS = [
@@ -60,6 +60,9 @@ INSTALLED_APPS = [
     "currencies",
     'rosetta'
 ]
+if DEBUG:
+    INSTALLED_APPS.append('silk')
+    INSTALLED_APPS.append("debug_toolbar")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -69,10 +72,17 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "project.middlewares.TrackingMiddleware",
+    "project.middlewares.TrackingMiddleware",
     "django.middleware.locale.LocaleMiddleware"
 ]
 
+if DEBUG:
+    MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 ROOT_URLCONF = "project.urls"
 
 TEMPLATES = [
@@ -86,6 +96,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "project.context_processors.slug_categories"
             ],
         },
     },
@@ -141,6 +152,7 @@ LOCALE_PATHS = [
     BASE_DIR / "locale"
 ]
 
+APPEND_SLASH = True
 TIME_ZONE = "Europe/Kiev"
 
 USE_I18N = True

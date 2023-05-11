@@ -29,9 +29,13 @@
                             <a class="nav-link active" aria-current="page"
                                href="{% url 'contacts' %}">{% translate 'Contacts' %}</a>
                         </li>
+                        {% include 'parts/category_menu.html' %}
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page"
                                href="{% url 'logout' %}">{% translate 'Logout' %}</a>
+                        </li>
+                        <li class="nav-item">
+                            {{ is_home }}
                         </li>
                         <li class="ms-auto nav-item">
                             <a class="nav-link active" aria-current="page"

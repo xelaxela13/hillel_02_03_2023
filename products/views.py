@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, FormView, ListView, DetailView
 
 from products.forms import ProductModelForm, ImportCSVForm
-from products.models import Product
+from products.models import Product, Category
 from project.model_choices import ProductCacheKeys
 
 
@@ -73,8 +73,8 @@ class ProductsView(ListView):
     def get_queryset(self):
         queryset = cache.get(ProductCacheKeys.PRODUCTS)
         if not queryset:
-            print('TO CACHE')
-            queryset = Product.objects.all()
+            queryset = Product.objects.prefetch_related('categories',
+                                                        'products').all()
             cache.set(ProductCacheKeys.PRODUCTS, queryset)
 
         ordering = self.get_ordering()
@@ -140,3 +140,31 @@ class ImportCSV(FormView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
+
+class ProductByCategory(ListView):
+    context_object_name = 'products'
+    model = Product
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.category = None
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.category = Category.objects.get(slug=kwargs['slug'])
+        except Category.DoesNotExist:
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        """
+        select_related  - FK, OneToOne
+        prefetch_related - ManyToMany
+
+        :return:
+        """
+        qs = super().get_queryset()
+        qs = qs.filter(categories=(self.category,))
+        qs = qs.prefetch_related('products', 'categories', )
+        return qs

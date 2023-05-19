@@ -69,6 +69,7 @@ class ProductDetail(DetailView):
 class ProductsView(ListView):
     context_object_name = 'products'
     model = Product
+    ordering = '-created_at'
 
     def get_queryset(self):
         queryset = cache.get(ProductCacheKeys.PRODUCTS)

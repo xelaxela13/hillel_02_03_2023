@@ -1,3 +1,5 @@
+import os
+
 import factory
 import faker
 import pytest
@@ -5,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from pytest_factoryboy import register
 
+from currencies.models import CurrencyHistory
 from products.models import Product, Category
 from project.constants import DECIMAL_PLACES
 
@@ -20,8 +23,11 @@ def faker_fixture():
 def django_db_setup(db):
     import shutil
     from django.conf import settings
+    media_root = settings.BASE_DIR / settings.MEDIA_ROOT
+    if not os.path.exists(media_root):
+        os.mkdir(media_root)
     yield
-    shutil.rmtree(settings.BASE_DIR / settings.MEDIA_ROOT)
+    shutil.rmtree(media_root)
 
 
 @register
@@ -82,3 +88,22 @@ def login_client(db, client):
         return client, user
 
     return login_user
+
+
+
+@register
+class CurrencyHistoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CurrencyHistory
+
+    code = factory.LazyAttribute(lambda x: fake.word())
+    buy = factory.LazyAttribute(lambda x: fake.pydecimal(
+        min_value=0,
+        left_digits=DECIMAL_PLACES,
+        right_digits=DECIMAL_PLACES,
+    ))
+    sale = factory.LazyAttribute(lambda x: fake.pydecimal(
+        min_value=0,
+        left_digits=DECIMAL_PLACES,
+        right_digits=DECIMAL_PLACES,
+    ))

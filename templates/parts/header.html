@@ -17,9 +17,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 w-100">
                     {% if request.user.is_authenticated %}
+                        {% include 'parts/category_menu.html' %}
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page"
-                               href="{% url 'products' %}">{% translate 'Products' %}</a>
+                               href="{% url 'products' %}">{% translate 'All products' %}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page"
@@ -29,13 +30,9 @@
                             <a class="nav-link active" aria-current="page"
                                href="{% url 'contacts' %}">{% translate 'Contacts' %}</a>
                         </li>
-                        {% include 'parts/category_menu.html' %}
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page"
                                href="{% url 'logout' %}">{% translate 'Logout' %}</a>
-                        </li>
-                        <li class="nav-item">
-                            {{ is_home }}
                         </li>
                         <li class="ms-auto nav-item">
                             <a class="nav-link active" aria-current="page"
@@ -50,11 +47,11 @@
                         </li>
                         <li>
                             <form action="{% url 'set_language' %}"
-                                  method="post">
+                                  method="post" class="d-flex">
                                 {% csrf_token %}
                                 <input name="next" type="hidden"
                                        value="{{ redirect_to }}">
-                                <select name="language">
+                                <select name="language" class="form-select">
                                     {% get_current_language as LANGUAGE_CODE %}
                                     {% get_available_languages as LANGUAGES %}
                                     {% get_language_info_list for LANGUAGES as languages %}
@@ -67,7 +64,7 @@
                                         </option>
                                     {% endfor %}
                                 </select>
-                                <input type="submit" value="Go">
+                                <input type="submit" value="Go" class="btn btn-primary">
                             </form>
                         </li>
                     {% else %}

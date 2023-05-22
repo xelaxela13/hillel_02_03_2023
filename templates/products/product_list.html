@@ -1,32 +1,38 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 {% block content %}
     <div class="col-12">
-        <p>
-            <a href="{% url 'products_to_csv' %}">Export to csv</a>
-        </p>
-        <p>
-            <a href="{% url 'products_to_pdf' %}">Export to pdf</a>
-        </p>
+        <div class="card my-3">
+            <div class="card-body">
+                <h5 class="card-title d-inline">{% translate 'Export products:' %}</h5>
+                <span class="h2 d-inline">
+                    <a href="{% url 'products_to_csv' %}"><i class="bi bi-filetype-csv"></i></a>
+                </span>
+                <span class="h2 d-inline">
+                    <a href="{% url 'products_to_pdf' %}"><i class="bi bi-filetype-pdf"></i></a>
+                </span>
+            </div>
+        </div>
     </div>
     {% for product in products %}
         <div class="col-12 {% if product.products.exists %}col-lg-6{% else %}col-lg-3{% endif %} mt-3 mt-lg-5">
             <div class="card">
-            <a href="{% url 'product' product.id %}">
-                {% if product.image %}
-                    <figure class="text-center">
-                        <img src="{{ product.image.url }}"
-                             class="product-img p-3"
-                             alt="{{ product.name }}">
-                    </figure>
-                {% else %}
-                    <figure class="text-center">
-                        <img src="{% static 'images/logo.png' %}"
-                             class="product-img p-3"
-                             alt="{{ product.name }}">
-                    </figure>
-                {% endif %}
-            </a>
+                <a href="{% url 'product' product.id %}">
+                    {% if product.image %}
+                        <figure class="text-center">
+                            <img src="{{ product.image.url }}"
+                                 class="product-img p-3"
+                                 alt="{{ product.name }}">
+                        </figure>
+                    {% else %}
+                        <figure class="text-center">
+                            <img src="{% static 'images/logo.png' %}"
+                                 class="product-img p-3"
+                                 alt="{{ product.name }}">
+                        </figure>
+                    {% endif %}
+                </a>
                 <div class="card-body">
                     <h5 class="card-title">{{ product.name }}</h5>
                     <p class="small">

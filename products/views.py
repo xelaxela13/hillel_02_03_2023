@@ -166,6 +166,6 @@ class ProductByCategory(ListView):
         :return:
         """
         qs = super().get_queryset()
-        qs = qs.filter(categories=(self.category,))
+        qs = qs.filter(categories__in=(self.category,))
         qs = qs.prefetch_related('products', 'categories', )
         return qs

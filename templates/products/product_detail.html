@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <div class="col-12 {% if product.products.exists %}col-lg-6{% else %}col-lg-3{% endif %} mt-3 mt-lg-5">
+    <div class="col-12 my-3">
         <div class="card">
             {% if product.image %}
                 <figure class="text-center">
@@ -24,7 +24,7 @@
                     {% endfor %}
                 </p>
                 <p class="card-text">
-                    {{ product.description|truncatewords:16 }}
+                    {{ product.description }}
                 </p>
                 <p class="card-text">
                     {{ product.price }}

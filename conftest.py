@@ -90,7 +90,6 @@ def login_client(db, client):
     return login_user
 
 
-
 @register
 class CurrencyHistoryFactory(factory.django.DjangoModelFactory):
     class Meta:

@@ -1,11 +1,12 @@
-from os import path
+import os
 
+from django.conf import settings
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.utils.text import slugify
 from django_lifecycle import LifecycleModelMixin, hook, AFTER_UPDATE, \
     AFTER_CREATE, BEFORE_CREATE, BEFORE_UPDATE
+from slugify import slugify
 
 from project.constants import MAX_DIGITS, DECIMAL_PLACES
 from project.mixins.models import PKMixin
@@ -13,7 +14,7 @@ from project.model_choices import Currencies, ProductCacheKeys
 
 
 def upload_to(instance, filename):
-    _name, extension = path.splitext(filename)
+    _name, extension = os.path.splitext(filename)
     return f'products/images/{str(instance.pk)}{extension}'
 
 
@@ -72,5 +73,20 @@ class Product(LifecycleModelMixin, PKMixin):
 
     @hook(AFTER_CREATE)
     @hook(AFTER_UPDATE)
-    def after_signal(self):
+    def after_create_signal(self):
         cache.delete(ProductCacheKeys.PRODUCTS)
+
+    @hook(BEFORE_UPDATE, when='image')
+    def after_update_signal(self):
+        if self.initial_value('image'):
+            image_path = os.path.join(settings.BASE_DIR,
+                                      settings.MEDIA_ROOT,
+                                      str(self.initial_value('image')))
+            try:
+                os.remove(image_path)
+            except (FileNotFoundError, OSError, IOError):
+                ...
+
+    def delete(self, *args, **kwargs):
+        self.image.delete()
+        super().delete(*args, **kwargs)

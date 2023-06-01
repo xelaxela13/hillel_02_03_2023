@@ -3,13 +3,16 @@ import csv
 import weasyprint
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.cache import cache
+from django.db.models import Q
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, FormView, ListView, DetailView
+from django_filters.views import FilterView
 
+from products.filters import ProductFilter
 from products.forms import ProductModelForm, ImportCSVForm
 from products.models import Product, Category
 from project.model_choices import ProductCacheKeys
@@ -21,7 +24,22 @@ def products(request, *args, **kwargs):
         form = ProductModelForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             form.save()
-    paginator = Paginator(Product.objects.all(), 8)
+
+    price_min = request.GET.get('price_min')
+    price_max = request.GET.get('price_max')
+    sku = request.GET.get('sku')
+    older_than = request.GET.get('older_than')
+    filters = Q()
+    if price_min:
+        filters &= Q(price__gte=price_min)
+    if price_max:
+        filters &= Q(price__lte=price_max)
+    if sku:
+        filters |= Q(sku__icontains=sku)
+    if older_than:
+        filters &= Q(created_at__gte=older_than)
+    qs = Product.objects.filter(filters)
+    paginator = Paginator(qs, 8)
     page_obj = paginator.get_page(request.GET.get("page"))
     return render(request, 'products/product_list.html', context={
         'products': page_obj,
@@ -67,11 +85,13 @@ class ProductDetail(DetailView):
         return obj
 
 
-class ProductsView(ListView):
+class ProductsView(FilterView):
+    template_name = 'products/product_list.html'
     context_object_name = 'products'
     model = Product
     ordering = '-created_at'
     paginate_by = 8
+    filterset_class = ProductFilter
 
     def get_queryset(self):
         queryset = cache.get(ProductCacheKeys.PRODUCTS)

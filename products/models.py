@@ -90,3 +90,21 @@ class Product(LifecycleModelMixin, PKMixin):
     def delete(self, *args, **kwargs):
         self.image.delete()
         super().delete(*args, **kwargs)
+
+
+class Attribute(PKMixin):
+    name = models.CharField(max_length=255)
+
+
+class CategoryAttribute(PKMixin):
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        related_name='attributes'
+    )
+    attribute = models.ForeignKey(
+        Attribute,
+        on_delete=models.CASCADE,
+        related_name='attribute_categories'
+    )
+    value = models.CharField(max_length=255)

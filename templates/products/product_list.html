@@ -46,6 +46,9 @@
                     <p class="card-text">
                         {{ product.price }}
                     </p>
+                    <p class="card-text">
+                        {{ product.sku }}
+                    </p>
                     {% if product.products.exists %}
                         <p>Including:</p>
                         {% for sub in product.products.iterator %}

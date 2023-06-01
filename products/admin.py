@@ -6,7 +6,7 @@ from project.mixins.admins import ImageSnapshotAdminMixin
 
 @admin.register(Product)
 class ProductAdmin(ImageSnapshotAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'price', 'is_active', 'categories_list')
+    list_display = ('name', 'price', 'is_active', 'categories_list', 'created_at')
     filter_horizontal = ('categories', 'products')
 
     def categories_list(self, obj):

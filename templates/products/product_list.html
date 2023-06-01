@@ -70,4 +70,7 @@
             </div>
         </div>
     {% endfor %}
+    {% if products %}
+        {% include 'parts/paginator.html' %}
+    {% endif %}
 {% endblock content %}

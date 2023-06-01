@@ -13,7 +13,7 @@ from django.views.generic import TemplateView, FormView, ListView, DetailView
 from products.forms import ProductModelForm, ImportCSVForm
 from products.models import Product, Category
 from project.model_choices import ProductCacheKeys
-
+from django.core.paginator import Paginator
 
 def products(request, *args, **kwargs):
     form = ProductModelForm()
@@ -21,9 +21,10 @@ def products(request, *args, **kwargs):
         form = ProductModelForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             form.save()
-
+    paginator = Paginator(Product.objects.all(), 8)
+    page_obj = paginator.get_page(request.GET.get("page"))
     return render(request, 'products/product_list.html', context={
-        'products': Product.objects.iterator(),
+        'products': page_obj,
         'form': form
     })
 
@@ -70,6 +71,7 @@ class ProductsView(ListView):
     context_object_name = 'products'
     model = Product
     ordering = '-created_at'
+    paginate_by = 8
 
     def get_queryset(self):
         queryset = cache.get(ProductCacheKeys.PRODUCTS)

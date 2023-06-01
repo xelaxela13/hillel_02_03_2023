@@ -73,7 +73,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "project.middlewares.TrackingMiddleware",
+    # "project.middlewares.TrackingMiddleware",
     "django.middleware.locale.LocaleMiddleware"
 ]
 

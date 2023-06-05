@@ -3,6 +3,7 @@ import csv
 import weasyprint
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.cache import cache
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
@@ -16,7 +17,7 @@ from products.filters import ProductFilter
 from products.forms import ProductModelForm, ImportCSVForm
 from products.models import Product, Category
 from project.model_choices import ProductCacheKeys
-from django.core.paginator import Paginator
+
 
 def products(request, *args, **kwargs):
     form = ProductModelForm()

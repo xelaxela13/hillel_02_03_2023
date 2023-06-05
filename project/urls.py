@@ -23,6 +23,7 @@ from feedbacks.urls import urlpatterns as feedbacks_urlpatterns
 from main.urls import urlpatterns as main_urlpatterns
 from orders.urls import urlpatterns as orders_urlpatterns
 from products.urls import urlpatterns as products_urlpatterns
+from apis.products.urls import urlpatterns as api_products_urlpatterns
 
 i18n_urlpatterns = [
     path('products/', include(products_urlpatterns)),
@@ -31,10 +32,13 @@ i18n_urlpatterns = [
     path('', include(main_urlpatterns)),
     path('', include(orders_urlpatterns)),
 ]
-
+api_urlpatterns = [
+    *api_products_urlpatterns
+]
 urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),
     path("admin/", admin.site.urls),
+    path("api/v1/", include(api_urlpatterns))
 
 ]
 urlpatterns = urlpatterns + i18n_patterns(*i18n_urlpatterns)

@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_filters',
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_yasg',
     # internal packages
     "products",
@@ -180,7 +182,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = 'django-db'
 
-
 CELERY_BEAT_SCHEDULE = {
     'Get currencies': {
         'task': 'currencies.tasks.get_currencies_task',
@@ -194,7 +195,7 @@ CACHES = {
         "LOCATION": "redis://127.0.0.1:6379",
     }
 }
-ADMINS = (('Admin', 'xelaxela13@gmail.com'), )
+ADMINS = (('Admin', 'xelaxela13@gmail.com'),)
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = env.str('EMAIL_HOST', default='EMAIL_HOST')
 EMAIL_PORT = env.str('EMAIL_PORT', default='EMAIL_PORT')
@@ -206,6 +207,16 @@ SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_SUBJECT_PREFIX = 'Shop - '
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'apis.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+}
 try:
     from project.settings_local import *  # noqa
 except ImportError:

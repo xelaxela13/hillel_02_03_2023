@@ -1,8 +1,6 @@
-from django.urls import path
+from rest_framework.routers import SimpleRouter
 
 from apis.products.views import ProductViewSet
-
-from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter()
 router.register(r'products', ProductViewSet, basename='products')

@@ -3,7 +3,7 @@
 {% load i18n %}
 {% block content %}
     <div class="col-12">
-        <div class="card my-3">
+        <div class="card export my-3">
             <div class="card-body">
                 <h5 class="card-title d-inline">{% translate 'Export products:' %}</h5>
                 <span class="h2 d-inline">
@@ -49,6 +49,11 @@
                     <p class="card-text">
                         {{ product.sku }}
                     </p>
+                    <p>
+                        <a href="javascript:void(0)" class="favourite-link" data-product_id="{{ product.id }}">
+                            <i class="bi {% if product.is_favourite %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                        </a>
+                    </p>
                     {% if product.products.exists %}
                         <p>Including:</p>
                         {% for sub in product.products.iterator %}
@@ -77,3 +82,12 @@
         {% include 'parts/paginator.html' %}
     {% endif %}
 {% endblock content %}
+{% block extra_scripts %}
+    <script>
+        $(document).ready(function () {
+            $('.favourite-link').click(function () {
+                add_or_remove_favourite($(this), "{{ csrf_token }}")
+            })
+        })
+    </script>
+{% endblock extra_scripts %}

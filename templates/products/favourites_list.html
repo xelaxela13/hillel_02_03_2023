@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+
+    {% for favourite in object_list %}
+        <div class="col-12 {% if favourite.product.products.exists %}col-lg-6{% else %}col-lg-3{% endif %} mt-3 mt-lg-5">
+            <div class="card">
+                <a href="{% url 'product' favourite.product.id %}">
+                    {% if favourite.product.image %}
+                        <figure class="text-center">
+                            <img src="{{ favourite.product.image.url }}"
+                                 class="product-img p-3"
+                                 alt="{{ favourite.product.name }}">
+                        </figure>
+                    {% else %}
+                        <figure class="text-center">
+                            <img src="{% static 'images/logo.png' %}"
+                                 class="product-img p-3"
+                                 alt="{{ favourite.product.name }}">
+                        </figure>
+                    {% endif %}
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">{{ favourite.product.name }}</h5>
+                    <p class="small">
+                        {% for category in favourite.product.categories.iterator %}
+                            <span class="text-success">{{ category.name }} </span>
+                        {% endfor %}
+                    </p>
+                    <p class="card-text">
+                        {{ favourite.product.description|truncatewords:16 }}
+                    </p>
+                    <p class="card-text">
+                        {{ favourite.product.price }}
+                    </p>
+                    <p class="card-text">
+                        {{ favourite.product.sku }}
+                    </p>
+                    {% if favourite.product.products.exists %}
+                        <p>Including:</p>
+                        {% for sub in favourite.product.products.iterator %}
+                            <div class="d-inline-flex flex-column rounded border p-2 m-1 sub-product">
+                                <p>{{ sub.name }}</p>
+                                <figure class="text-center d-inline">
+                                    <img src="{{ sub.image.url }}"
+                                         class="product-img p-3"
+                                         alt="{{ favourite.product.name }}">
+                                </figure>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <form method="post" action="{% url 'cart_action' 'add' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id"
+                               value="{{ favourite.product.id }}">
+                        <input type="submit" value="Add to cart"
+                               class="btn btn-warning w-100">
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 col-lg-3 offset-lg-3">
+            <h2>{% translate 'Favourite products' %}</h2>
+            <p><a href="{% url 'products' %}">Products</a></p>
+        </div>
+    {% endfor %}
+    {% if products %}
+        {% include 'parts/paginator.html' %}
+    {% endif %}
+{% endblock content %}

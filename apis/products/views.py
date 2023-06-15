@@ -1,4 +1,6 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, viewsets
+from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny
 
 from apis.products.paginators import ProductPaginator
@@ -42,6 +44,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = ProductPaginator
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    search_fields = ['name']
+    filterset_fields = ('sku', 'is_active')
 
     def perform_destroy(self, instance):
         serializer = ProductDeleteSerializer(instance, data={})

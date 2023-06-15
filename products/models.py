@@ -1,6 +1,7 @@
 import os
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -108,3 +109,19 @@ class CategoryAttribute(PKMixin):
         related_name='attribute_categories'
     )
     value = models.CharField(max_length=255)
+
+
+class FavouriteProduct(PKMixin):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='favourites'
+    )
+    user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        related_name='favourite_products'
+    )
+
+    class Meta:
+        unique_together = ('product', 'user')

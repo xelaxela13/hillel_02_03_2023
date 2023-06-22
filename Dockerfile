@@ -7,6 +7,10 @@ WORKDIR /project
 
 COPY ./requirements.txt .
 
+RUN apt-get update
+RUN apt-get -y install netcat-traditional
+RUN apt-get clean
+
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 

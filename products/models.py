@@ -20,7 +20,7 @@ def upload_to(instance, filename):
 
 
 class Category(LifecycleModelMixin, PKMixin):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255)
     is_manual_slug = models.BooleanField(default=False)
     description = models.TextField(
@@ -69,6 +69,8 @@ class Product(LifecycleModelMixin, PKMixin):
         default=Currencies.UAH
     )
 
+    class Meta:
+        permissions = (('active', 'Make product active'),)
     def __str__(self):
         return f"{self.name} - {self.price}"
 

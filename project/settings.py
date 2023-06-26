@@ -65,7 +65,8 @@ INSTALLED_APPS = [
     "main",
     "tracking",
     "currencies",
-    'rosetta'
+    'rosetta',
+    'configs'
 ]
 if DEBUG:
     INSTALLED_APPS.append('silk')
@@ -124,6 +125,12 @@ DATABASES = {
         "PORT": env("SQL_PORT", default="5432"),
     }
 }
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 
 # Password validation

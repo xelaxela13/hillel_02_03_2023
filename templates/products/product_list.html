@@ -50,7 +50,7 @@
                         {{ product.sku }}
                     </p>
                     <p>
-                        <a href="javascript:void(0)" class="favourite-link" data-product_id="{{ product.id }}">
+                        <a href="javascript:void(0)" class="favourite-link" data-product_id="{% url 'ajax_add_or_remove_favourite' product.id %}">
                             <i class="bi {% if product.is_favourite %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
                         </a>
                     </p>

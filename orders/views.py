@@ -46,7 +46,8 @@ class CartActionView(GetCurrentOrderMixin, RedirectView):
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        form = CartActionForm(request.POST, instance=self.get_object())
+        form = CartActionForm(request.POST, instance=self.get_object(),
+                              order_item_id=request.GET.get('order_item_id'))
         if form.is_valid():
             form.action(kwargs.get('action'))
         return self.get(request, *args, **kwargs)

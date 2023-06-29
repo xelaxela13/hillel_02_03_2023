@@ -1,9 +1,8 @@
 function add_or_remove_favourite(item, csrf_token) {
-    console.log(csrf_token)
-    let product_id = item.data('product_id'),
+    let url = item.data('product_id'),
         heart = item.find('.bi');
     $.get(
-        `ajax-favourite/${product_id}`
+        url
     ).done(function (data) {
         if (data.is_favourite === true) {
             heart.addClass('bi-heart-fill').removeClass('bi-heart')
